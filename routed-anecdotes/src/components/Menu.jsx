@@ -1,12 +1,19 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useMatch } from "react-router-dom";
 import AnecdoteList from "./AnecdoteList";
+import Anecdote from "./Anecdote";
 import CreateNew from "./CreateNew";
 import About from "./About";
 
-const Menu = ({ anecdotes, addNew }) => {
+const Menu = ({ anecdotes, addNew, vote }) => {
 	const padding = {
 		paddingRight: 5,
 	};
+
+	const match = useMatch("/:id");
+	const anecdoteById = match
+		? anecdotes.find((a) => a.id === Number(match.params.id))
+		: null;
+
 	return (
 		<>
 			<div>
@@ -24,6 +31,10 @@ const Menu = ({ anecdotes, addNew }) => {
 				<Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
 				<Route path="/create" element={<CreateNew addNew={addNew} />} />
 				<Route path="/about" element={<About />} />
+				<Route
+					path="/:id"
+					element={<Anecdote anecdoteById={anecdoteById} vote={vote} />}
+				/>
 			</Routes>
 		</>
 	);

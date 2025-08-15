@@ -28,8 +28,6 @@ const App = () => {
 		setAnecdotes(anecdotes.concat(anecdote));
 	};
 
-	const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
-
 	const vote = (id) => {
 		const anecdote = anecdoteById(id);
 
@@ -45,7 +43,7 @@ const App = () => {
 		<Router>
 			<div>
 				<h1>Software anecdotes</h1>
-				<Menu anecdotes={anecdotes} addNew={addNew} />
+				<Menu anecdotes={anecdotes} addNew={addNew} vote={vote} />
 				<Footer />
 			</div>
 		</Router>
