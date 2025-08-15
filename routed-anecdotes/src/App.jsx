@@ -21,23 +21,21 @@ const App = () => {
 		},
 	]);
 
-	const [notification, setNotification] = useState("");
-
 	const addNew = (anecdote) => {
 		anecdote.id = Math.round(Math.random() * 10000);
 		setAnecdotes(anecdotes.concat(anecdote));
 	};
 
-	const vote = (id) => {
-		const anecdote = anecdoteById(id);
+	// const vote = (id) => {
+	// 	const anecdote = anecdoteById(id);
 
-		const voted = {
-			...anecdote,
-			votes: anecdote.votes + 1,
-		};
+	// 	const voted = {
+	// 		...anecdote,
+	// 		votes: anecdote.votes + 1,
+	// 	};
 
-		setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
-	};
+	// 	setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
+	// };
 
 	return (
 		<Router>
