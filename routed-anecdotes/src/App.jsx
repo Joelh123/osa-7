@@ -26,6 +26,7 @@ const App = () => {
 		setAnecdotes(anecdotes.concat(anecdote));
 	};
 
+	const vote = null;
 	// const vote = (id) => {
 	// 	const anecdote = anecdoteById(id);
 
