@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useField } from "../hooks";
 
 const CreateNew = (props) => {
-	const content = useField("text");
-	const author = useField("text");
-	const info = useField("text");
+	const { clear: clearContent, ...content } = useField("text");
+	const { clear: clearAuthor, ...author } = useField("text");
+	const { clear: clearInfo, ...info } = useField("text");
+
+	console.log(content);
 
 	const navigate = useNavigate();
 
@@ -24,9 +26,9 @@ const CreateNew = (props) => {
 	};
 
 	const clearFields = () => {
-		content.clear();
-		author.clear();
-		info.clear();
+		clearContent();
+		clearAuthor();
+		clearInfo();
 	};
 
 	return (
