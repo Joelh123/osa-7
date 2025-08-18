@@ -23,9 +23,9 @@ const useCountry = (name) => {
 			axios
 				.get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`)
 				.then((res) => setCountry({ ...res, found: true }))
-				.catch((error) => setCountry({ ...country, found: false }));
+				.catch(() => setCountry({ ...country, found: false }));
 		} else {
-			null;
+			setCountry(null);
 		}
 	}, [name]);
 
