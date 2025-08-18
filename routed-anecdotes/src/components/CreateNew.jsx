@@ -6,8 +6,6 @@ const CreateNew = (props) => {
 	const { clear: clearAuthor, ...author } = useField("text");
 	const { clear: clearInfo, ...info } = useField("text");
 
-	console.log(content);
-
 	const navigate = useNavigate();
 
 	const handleSubmit = (e) => {
