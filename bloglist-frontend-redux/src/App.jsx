@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import ErrorMessage from "./components/ErrorMessage";
@@ -10,9 +10,9 @@ import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
 import { setNotification } from "./reducers/notificationReducer";
 import { setErrorMessage } from "./reducers/errorMessageReducer";
+import { addBlog, initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
-	const [blogs, setBlogs] = useState([]);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [user, setUser] = useState(null);
@@ -21,10 +21,10 @@ const App = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		blogService
-			.getAll()
-			.then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
-	}, []);
+		dispatch(initializeBlogs());
+	}, [dispatch]);
+
+	const blogs = useSelector((state) => state.blogs);
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -62,9 +62,8 @@ const App = () => {
 
 	const createBlog = (blogObject) => {
 		blogFormRef.current.toggleVisibility();
-		blogService.create(blogObject).then((returnedBlog) => {
-			setBlogs(blogs.concat(returnedBlog));
-		});
+
+		dispatch(addBlog(blogObject));
 
 		if (!(blogObject.title || blogObject.author || blogObject.url)) {
 			return dispatch(setErrorMessage("Fill every field"));
