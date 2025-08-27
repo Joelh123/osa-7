@@ -10,6 +10,7 @@ import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
 import { setNotification } from "./reducers/notificationReducer";
 import { setErrorMessage } from "./reducers/errorMessageReducer";
+import { setUser, clearUser } from "./reducers/userReducer";
 import {
 	addBlog,
 	deleteBlog,
@@ -20,7 +21,6 @@ import {
 const App = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const [user, setUser] = useState(null);
 
 	const blogFormRef = useRef();
 	const dispatch = useDispatch();
@@ -30,12 +30,14 @@ const App = () => {
 	}, [dispatch]);
 
 	const blogs = useSelector((state) => state.blogs);
+	const user = useSelector((state) => state.user);
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+		console.log(user);
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
-			setUser(user);
+			dispatch(setUser(user));
 			blogService.setToken(user.token);
 		}
 	}, []);
@@ -50,7 +52,7 @@ const App = () => {
 			});
 			window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
 			blogService.setToken(user.token);
-			setUser(user);
+			dispatch(setUser(user));
 			setUsername("");
 			setPassword("");
 		} catch (exception) {
@@ -62,7 +64,8 @@ const App = () => {
 		event.preventDefault();
 
 		window.localStorage.clear();
-		setUser(null);
+		dispatch(clearUser());
+		console.log(user);
 	};
 
 	const createBlog = (blogObject) => {
@@ -135,7 +138,7 @@ const App = () => {
 		</div>
 	);
 
-	return <div>{user === null ? loginForm() : blogForm(user)}</div>;
+	return <div>{!user ? loginForm() : blogForm(user)}</div>;
 };
 
 export default App;
