@@ -26,7 +26,8 @@ const update = async (id, updatedObject) => {
 		headers: { Authorization: token },
 	};
 
-	const response = await axios.put(`${baseUrl}/${id}`, updatedObject, config);
+	await axios.put(`${baseUrl}/${id}`, updatedObject, config);
+	const response = await axios.get(baseUrl);
 	return response.data;
 };
 
@@ -35,7 +36,8 @@ const remove = async (id) => {
 		headers: { Authorization: token },
 	};
 
-	const response = await axios.delete(`${baseUrl}/${id}`, config);
+	await axios.delete(`${baseUrl}/${id}`, config);
+	const response = await axios.get(baseUrl);
 	return response.data;
 };
 

@@ -10,7 +10,12 @@ import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
 import { setNotification } from "./reducers/notificationReducer";
 import { setErrorMessage } from "./reducers/errorMessageReducer";
-import { addBlog, initializeBlogs } from "./reducers/blogReducer";
+import {
+	addBlog,
+	deleteBlog,
+	initializeBlogs,
+	likeBlog,
+} from "./reducers/blogReducer";
 
 const App = () => {
 	const [username, setUsername] = useState("");
@@ -77,34 +82,14 @@ const App = () => {
 	};
 
 	const updateBlog = (blog) => {
-		blogService
-			.update(blog.id, {
-				title: blog.title,
-				author: blog.author,
-				url: blog.url,
-				likes: blog.likes + 1,
-				user: blog.user._id,
-			})
-			.then((response) => {
-				const updatedBlog = {
-					...response,
-					user: typeof response.user === "object" ? response.user : blog.user,
-				};
-				setBlogs(
-					blogs
-						.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
-						.sort((a, b) => b.likes - a.likes)
-				);
-			});
+		dispatch(likeBlog(blog, user));
 	};
 
 	const removeBlog = (blogToRemove) => {
 		if (
 			window.confirm(`Remove blog ${blogToRemove.title} by ${blogToRemove.author}`)
 		) {
-			blogService.remove(blogToRemove.id).then((response) => {
-				setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id));
-			});
+			dispatch(deleteBlog(blogToRemove));
 
 			dispatch(setNotification(`${blogToRemove.title} has been deleted`));
 		} else {
