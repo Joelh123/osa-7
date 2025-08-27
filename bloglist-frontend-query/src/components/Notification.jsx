@@ -1,23 +1,23 @@
-const Notification = ({ message }) => {
-  const notificationStyle = {
-    color: 'green',
-    fontSize: 16,
-    background: 'lightgrey',
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
-  }
+import { useNotificationValue } from "../contexts/NotificationContext";
 
-  if (!message) {
-    return null
-  }
+const Notification = () => {
+	const notification = useNotificationValue();
 
-  return (
-    <div style={notificationStyle}>
-      {message}
-    </div>
-  )
-}
+	const notificationStyle = {
+		color: "green",
+		fontSize: 16,
+		background: "lightgrey",
+		borderStyle: "solid",
+		borderRadius: 5,
+		padding: 10,
+		marginBottom: 10,
+	};
 
-export default Notification
+	if (!notification) {
+		return null;
+	}
+
+	return <div style={notificationStyle}>{notification}</div>;
+};
+
+export default Notification;

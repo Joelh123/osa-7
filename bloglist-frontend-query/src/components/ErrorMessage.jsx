@@ -1,23 +1,27 @@
-const ErrorMessage = ({ message }) => {
-  const errorStyle = {
-    color: 'red',
-    fontSize: 16,
-    background: 'lightgrey',
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
-  }
+import { useErrorMessageValue } from "../contexts/ErrorMessageContext";
 
-  if (!message) {
-    return null
-  }
+const ErrorMessage = () => {
+	const errorMessage = useErrorMessageValue();
 
-  return (
-    <div style={errorStyle} className="error">
-      {message}
-    </div>
-  )
-}
+	const errorStyle = {
+		color: "red",
+		fontSize: 16,
+		background: "lightgrey",
+		borderStyle: "solid",
+		borderRadius: 5,
+		padding: 10,
+		marginBottom: 10,
+	};
 
-export default ErrorMessage
+	if (!errorMessage) {
+		return null;
+	}
+
+	return (
+		<div style={errorStyle} className="error">
+			{errorMessage}
+		</div>
+	);
+};
+
+export default ErrorMessage;
