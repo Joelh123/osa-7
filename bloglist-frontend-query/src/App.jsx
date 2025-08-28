@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import ErrorMessage from "./components/ErrorMessage";
@@ -11,7 +12,6 @@ import { useNotificationDispatch } from "./contexts/NotificationContext";
 import { useErrorMessageDispatch } from "./contexts/ErrorMessageContext";
 
 const App = () => {
-	const [blogs, setBlogs] = useState([]);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [user, setUser] = useState(null);
@@ -21,11 +21,15 @@ const App = () => {
 	const notificationDispatch = useNotificationDispatch();
 	const errorMessageDispatch = useErrorMessageDispatch();
 
-	useEffect(() => {
-		blogService
-			.getAll()
-			.then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
-	}, []);
+	const queryClient = useQueryClient();
+
+	const result = useQuery({
+		queryKey: ["blogs"],
+		queryFn: blogService.getAll,
+		reFetchOnWindowFocus: false,
+	});
+
+	const blogs = result.data;
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -67,27 +71,31 @@ const App = () => {
 
 	const createBlog = (blogObject) => {
 		blogFormRef.current.toggleVisibility();
-		blogService.create(blogObject).then((returnedBlog) => {
-			setBlogs(blogs.concat(returnedBlog));
-		});
+		newBlogMutation.mutate(blogObject);
+	};
 
-		if (!(blogObject.title || blogObject.author || blogObject.url)) {
+	const newBlogMutation = useMutation({
+		mutationFn: blogService.create,
+		onSuccess: (newBlog) => {
+			const blogs = queryClient.getQueryData(["blogs"]);
+			queryClient.setQueryData(["blogs"], blogs.concat(newBlog));
+			notificationDispatch({
+				type: "SET",
+				payload: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+			});
+			setTimeout(() => {
+				notificationDispatch({ type: "CLEAR" });
+			}, 5000);
+		},
+		onError: (error) => {
+			console.log(error);
 			errorMessageDispatch({ type: "SET", payload: "Fill every field" });
 
 			setTimeout(() => {
 				errorMessageDispatch({ type: "CLEAR" });
 			}, 5000);
-			return null;
-		}
-
-		notificationDispatch({
-			type: "SET",
-			payload: `a new blog ${blogObject.title} by ${blogObject.author} added`,
-		});
-		setTimeout(() => {
-			notificationDispatch({ type: "CLEAR" });
-		}, 5000);
-	};
+		},
+	});
 
 	const updateBlog = (blog) => {
 		blogService
@@ -131,6 +139,14 @@ const App = () => {
 			return null;
 		}
 	};
+
+	if (result.isLoading) {
+		return <div>loading data...</div>;
+	}
+
+	if (!result.isSuccess && !result.isLoading) {
+		return <div>anecdote service not available duo to problems in server</div>;
+	}
 
 	const loginForm = () => (
 		<>
