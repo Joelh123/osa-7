@@ -10,14 +10,15 @@ import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
 import { useNotificationDispatch } from "./contexts/NotificationContext";
 import { useErrorMessageDispatch } from "./contexts/ErrorMessageContext";
+import { useUserDispatch, useUserValue } from "./contexts/UserContext";
 
 const App = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const [user, setUser] = useState(null);
 
 	const blogFormRef = useRef();
 
+	const userDispatch = useUserDispatch();
 	const notificationDispatch = useNotificationDispatch();
 	const errorMessageDispatch = useErrorMessageDispatch();
 
@@ -30,12 +31,13 @@ const App = () => {
 	});
 
 	const blogs = result.data;
+	const user = useUserValue();
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
-			setUser(user);
+			userDispatch({ type: "SET", payload: user });
 			blogService.setToken(user.token);
 		}
 	}, []);
@@ -50,7 +52,7 @@ const App = () => {
 			});
 			window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
 			blogService.setToken(user.token);
-			setUser(user);
+			userDispatch({ type: "SET", payload: user });
 			setUsername("");
 			setPassword("");
 		} catch (exception) {
@@ -66,7 +68,7 @@ const App = () => {
 		event.preventDefault();
 
 		window.localStorage.clear();
-		setUser(null);
+		userDispatch({ type: "CLEAR" });
 	};
 
 	const createBlog = (blogObject) => {
