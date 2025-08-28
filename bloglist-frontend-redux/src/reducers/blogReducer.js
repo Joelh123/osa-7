@@ -30,12 +30,12 @@ export const addBlog = (content) => {
 	};
 };
 
-export const likeBlog = (blog, user) => {
+export const likeBlog = (blog) => {
 	return async (dispatch) => {
 		const updatedBlog = {
 			...blog,
 			likes: blog.likes + 1,
-			user: user.id,
+			user: blog.user.id || blog.user,
 		};
 
 		const updatedBlogs = await blogService.update(updatedBlog.id, updatedBlog);

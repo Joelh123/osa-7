@@ -85,7 +85,7 @@ const App = () => {
 	};
 
 	const updateBlog = (blog) => {
-		dispatch(likeBlog(blog, user));
+		dispatch(likeBlog(blog));
 	};
 
 	const removeBlog = (blogToRemove) => {

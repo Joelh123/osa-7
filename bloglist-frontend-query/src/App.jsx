@@ -87,8 +87,7 @@ const App = () => {
 				notificationDispatch({ type: "CLEAR" });
 			}, 5000);
 		},
-		onError: (error) => {
-			console.log(error);
+		onError: () => {
 			errorMessageDispatch({ type: "SET", payload: "Fill every field" });
 
 			setTimeout(() => {
@@ -98,47 +97,48 @@ const App = () => {
 	});
 
 	const updateBlog = (blog) => {
-		blogService
-			.update(blog.id, {
-				title: blog.title,
-				author: blog.author,
-				url: blog.url,
-				likes: blog.likes + 1,
-				user: blog.user._id,
-			})
-			.then((response) => {
-				const updatedBlog = {
-					...response,
-					user: typeof response.user === "object" ? response.user : blog.user,
-				};
-				setBlogs(
-					blogs
-						.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
-						.sort((a, b) => b.likes - a.likes)
-				);
-			});
+		updateBlogMutation.mutate({
+			...blog,
+			likes: blog.likes + 1,
+			user: blog.user.id || blog.user,
+		});
 	};
+
+	const updateBlogMutation = useMutation({
+		mutationFn: blogService.update,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["blogs"] });
+		},
+	});
 
 	const removeBlog = (blogToRemove) => {
 		if (
 			window.confirm(`Remove blog ${blogToRemove.title} by ${blogToRemove.author}`)
 		) {
-			blogService.remove(blogToRemove.id).then((response) => {
-				setBlogs(blogs.filter((blog) => blog.id !== blogToRemove.id));
-			});
+			removeBlogMutation.mutate(blogToRemove);
+		} else {
+			return null;
+		}
+	};
+
+	const removeBlogMutation = useMutation({
+		mutationFn: blogService.remove,
+		onSuccess: (removedBlog) => {
+			queryClient.setQueryData(
+				["blogs"],
+				blogs.filter((blog) => blog.id !== removedBlog.id)
+			);
 
 			notificationDispatch({
 				type: "SET",
-				payload: `${blogToRemove.title} has been deleted`,
+				payload: `${removedBlog.title} has been deleted`,
 			});
 
 			setTimeout(() => {
 				notificationDispatch({ type: "CLEAR" });
 			}, 5000);
-		} else {
-			return null;
-		}
-	};
+		},
+	});
 
 	if (result.isLoading) {
 		return <div>loading data...</div>;
