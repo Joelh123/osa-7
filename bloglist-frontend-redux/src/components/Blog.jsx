@@ -1,7 +1,29 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { likeBlog, deleteBlog } from "../reducers/blogReducer";
+import { setNotification } from "../reducers/notificationReducer";
 
-const Blog = ({ blog, updateBlog, removeBlog, user }) => {
+const Blog = ({ blog }) => {
 	const [moreVisible, setMoreVisible] = useState(false);
+
+	const dispatch = useDispatch();
+	const user = useSelector((state) => state.user);
+
+	const updateBlog = (blog) => {
+		dispatch(likeBlog(blog));
+	};
+
+	const removeBlog = (blogToRemove) => {
+		if (
+			window.confirm(`Remove blog ${blogToRemove.title} by ${blogToRemove.author}`)
+		) {
+			dispatch(deleteBlog(blogToRemove));
+
+			dispatch(setNotification(`${blogToRemove.title} has been deleted`));
+		} else {
+			return null;
+		}
+	};
 
 	const blogStyle = {
 		paddingTop: 10,

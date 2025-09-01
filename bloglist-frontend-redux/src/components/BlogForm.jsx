@@ -1,11 +1,17 @@
 import { useState } from "react";
+import { setErrorMessage } from "../reducers/errorMessageReducer";
+import { setNotification } from "../reducers/notificationReducer";
+import { addBlog } from "../reducers/blogReducer";
+import { useDispatch } from "react-redux";
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({ blogFormRef }) => {
 	const [title, setTitle] = useState("");
 	const [author, setAuthor] = useState("");
 	const [url, setUrl] = useState("");
 
-	const addBlog = (event) => {
+	const dispatch = useDispatch();
+
+	const handleBlogCreation = (event) => {
 		event.preventDefault();
 
 		createBlog({
@@ -19,10 +25,26 @@ const BlogForm = ({ createBlog }) => {
 		setUrl("");
 	};
 
+	const createBlog = (blogObject) => {
+		blogFormRef.current.toggleVisibility();
+
+		dispatch(addBlog(blogObject));
+
+		if (!(blogObject.title || blogObject.author || blogObject.url)) {
+			return dispatch(setErrorMessage("Fill every field"));
+		}
+
+		dispatch(
+			setNotification(
+				`a new blog ${blogObject.title} by ${blogObject.author} added`
+			)
+		);
+	};
+
 	return (
-		<div>
+		<div className="container">
 			<h2>Create a new blog</h2>
-			<form onSubmit={addBlog}>
+			<form onSubmit={handleBlogCreation}>
 				<div>
 					title:
 					<input
