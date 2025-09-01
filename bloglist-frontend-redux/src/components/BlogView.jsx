@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Notification from "./Notification";
 import ErrorMessage from "./ErrorMessage";
@@ -7,6 +7,7 @@ import BlogForm from "./BlogForm";
 import Blog from "./Blog";
 import { clearUser } from "../reducers/userReducer";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import Users from "./Users";
 import User from "./User";
 
 const BlogView = () => {
@@ -16,6 +17,7 @@ const BlogView = () => {
 
 	const user = useSelector((state) => state.user);
 	const blogs = useSelector((state) => state.blogs);
+	const users = useSelector((state) => state.users);
 
 	const handleLogout = (event) => {
 		event.preventDefault();
@@ -46,7 +48,8 @@ const BlogView = () => {
 				{user.name} logged in <button onClick={handleLogout}>logout</button>
 			</p>
 			<Routes>
-				<Route path="/users" element={<User />} />
+				<Route path="/users" element={<Users users={users} />} />
+				<Route path="/users/:id" element={<User users={users} />} />
 				<Route path="/blogs" element={blogList} />
 			</Routes>
 		</div>
