@@ -1,8 +1,10 @@
 import Table from "react-bootstrap/Table";
 import { Link } from "react-router-dom";
+import NavBar from "./NavBar";
 
-const Users = ({ users }) => (
+const UserView = ({ users }) => (
 	<div className="container">
+		<NavBar />
 		<h1>Users</h1>
 		<Table striped>
 			<tbody>
@@ -27,4 +29,4 @@ const Users = ({ users }) => (
 	</div>
 );
 
-export default Users;
+export default UserView;

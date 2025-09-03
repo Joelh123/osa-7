@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import NavBar from "./NavBar";
 
 const User = ({ users }) => {
 	const id = useParams().id;
@@ -9,7 +10,8 @@ const User = ({ users }) => {
 	}
 
 	return (
-		<div>
+		<div className="container">
+			<NavBar />
 			<h1>{user.name}</h1>
 			<p>
 				<b>added blogs</b>

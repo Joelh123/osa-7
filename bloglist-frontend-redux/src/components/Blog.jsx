@@ -1,10 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { likeBlog, deleteBlog } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import NavBar from "./NavBar";
 
 const Blog = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
 	const user = useSelector((state) => state.user);
 	const blogs = useSelector((state) => state.blogs);
 	const id = useParams().id;
@@ -19,8 +22,8 @@ const Blog = () => {
 			window.confirm(`Remove blog ${blogToRemove.title} by ${blogToRemove.author}`)
 		) {
 			dispatch(deleteBlog(blogToRemove));
-
 			dispatch(setNotification(`${blogToRemove.title} has been deleted`));
+			navigate("/blogs");
 		} else {
 			return null;
 		}
@@ -31,7 +34,8 @@ const Blog = () => {
 	}
 
 	return (
-		<>
+		<div className="container">
+			<NavBar />
 			<h1>{blog.title}</h1>
 			<div>
 				<a href={blog.url}>{blog.url}</a>
@@ -43,7 +47,7 @@ const Blog = () => {
 			{user.username === blog.user.username ? (
 				<button onClick={() => removeBlog(blog)}>remove</button>
 			) : null}
-		</>
+		</div>
 	);
 };
 
