@@ -42,7 +42,7 @@ const BlogForm = ({ blogFormRef }) => {
 	};
 
 	return (
-		<div className="container">
+		<div>
 			<h2>Create a new blog</h2>
 			<form onSubmit={handleBlogCreation}>
 				<div>
