@@ -2,7 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { likeBlog, deleteBlog } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
 import { useNavigate, useParams } from "react-router-dom";
+import { initializeComments } from "../reducers/commentReducer";
 import NavBar from "./NavBar";
+import { useEffect } from "react";
+import CommentForm from "./CommentForm";
 
 const Blog = () => {
 	const dispatch = useDispatch();
@@ -10,8 +13,15 @@ const Blog = () => {
 
 	const user = useSelector((state) => state.user);
 	const blogs = useSelector((state) => state.blogs);
+	const comments = useSelector((state) => state.comments);
 	const id = useParams().id;
 	const blog = blogs.find((b) => b.id === id);
+
+	console.log(comments);
+
+	useEffect(() => {
+		dispatch(initializeComments(id));
+	}, [dispatch]);
 
 	const updateBlog = (blog) => {
 		dispatch(likeBlog(blog));
@@ -47,6 +57,15 @@ const Blog = () => {
 			{user.username === blog.user.username ? (
 				<button onClick={() => removeBlog(blog)}>remove</button>
 			) : null}
+			<p>
+				<b>comments</b>
+			</p>
+			<CommentForm id={id} />
+			<ul>
+				{comments.map((c) => (
+					<li key={c.id}>{c.content}</li>
+				))}
+			</ul>
 		</div>
 	);
 };

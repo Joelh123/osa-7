@@ -4,6 +4,7 @@ import errorMessageReducer from "./errorMessageReducer";
 import blogReducer from "./blogReducer";
 import userReducer from "./userReducer";
 import usersReducer from "./usersReducer";
+import commentReducer from "./commentReducer";
 
 const store = configureStore({
 	reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
 		user: userReducer,
 		notification: notificationReducer,
 		errorMessage: errorMessageReducer,
+		comments: commentReducer,
 	},
 });
 
